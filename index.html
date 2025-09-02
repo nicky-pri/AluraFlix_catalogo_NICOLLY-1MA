@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Pesquisa de Filmes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #444;
+    }
+    #search {
+      display: block;
+      margin: 20px auto;
+      padding: 10px;
+      width: 80%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .results {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .movie {
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .movie img {
+      width: 100%;
+      border-radius: 6px;
+    }
+    .movie h3 {
+      margin: 10px 0 5px;
+      font-size: 18px;
+    }
+    .movie p {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔎 Pesquisa de Filmes</h1>
+  <input type="text" id="search" placeholder="Digite o título do filme...">
+  <div class="results" id="results"></div>
+
+  <script>
+    const apiKey = "xxx";
+    const searchInput = document.getElementById("search");
+    const resultsDiv = document.getElementById("results");
+
+    searchInput.addEventListener("keyup", async () => {
+      const query = searchInput.value.trim();
+      if (!query) { resultsDiv.innerHTML = ""; return; }
+
+      const res = await fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      if (data.Search) {
+        resultsDiv.innerHTML = data.Search.map(movie => `
+          <div class="movie">
+            <img src="${movie.Poster !== "N/A" ? movie.Poster : "https://via.placeholder.com/200x300"}" alt="${movie.Title}">
+            <h3>${movie.Title}</h3>
+            <p>${movie.Year}</p>
+          </div>
+        `).join("");
+      } else {
+        resultsDiv.innerHTML = "<p>Nenhum filme encontrado.</p>";
+      }
+    });
+  </script>
+</body>
+</html>
